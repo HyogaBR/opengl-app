@@ -53,3 +53,9 @@ Um projeto de exemplo em C++ utilizando OpenGL 3.3 Core, GLFW, GLAD, GLM e shade
 ---
 
 Sinta-se à vontade para modificar, estudar e expandir este projeto!
+
+
+## Atualizações
+
+- Adicionamos suporte a texturas, carregando sprites com stb_images.
+![Screenshot](images/readme_images/Screenshot_2.png)
