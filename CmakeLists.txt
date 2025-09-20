@@ -1,0 +1,71 @@
+#[==[
+
+cmake_minimum_required(VERSION 3.16)
+project(OpenGLApp LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 99)
+
+# pkg-config para pacotes oficiais MSYS2
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLFW REQUIRED glfw3)
+find_package(glm REQUIRED)
+
+# adiciona executável
+add_executable(opengl_app 
+    main.cpp
+    externals/glad/src/glad.c
+    # imgui core
+    externals/imgui/imgui.cpp
+    externals/imgui/imgui_draw.cpp
+    externals/imgui/imgui_widgets.cpp
+    externals/imgui/imgui_tables.cpp
+    # imgui backends
+    externals/imgui/backends/imgui_impl_glfw.cpp
+    externals/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+# includes
+target_include_directories(opengl_app PRIVATE
+    ${GLFW_INCLUDE_DIRS}
+    ${GLM_INCLUDE_DIRS}
+    externals/glad/include
+    externals/imgui
+    externals/imgui/backends   # <--- corrigi aqui
+    externals/stb              # header-only
+)
+
+# libs
+target_link_libraries(opengl_app PRIVATE
+    ${GLFW_LIBRARIES}
+    opengl32
+)
+
+]==]
+
+cmake_minimum_required(VERSION 3.16)
+project(OpenGLApp LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 99)
+
+# pkg-config para pacotes oficiais MSYS2
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLFW REQUIRED glfw3)
+find_package(glm REQUIRED)
+
+add_executable(opengl_app 
+    main.cpp
+    externals/glad/src/glad.c
+)
+
+target_include_directories(opengl_app PRIVATE
+    ${GLFW_INCLUDE_DIRS}
+    ${GLM_INCLUDE_DIRS}
+    externals/glad/include
+)
+
+target_link_libraries(opengl_app PRIVATE
+    ${GLFW_LIBRARIES}
+    opengl32
+)
