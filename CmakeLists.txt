@@ -55,7 +55,7 @@ pkg_check_modules(GLFW REQUIRED glfw3)
 find_package(glm REQUIRED)
 
 add_executable(opengl_app 
-    main.cpp
+    src/main.cpp
     externals/glad/src/glad.c
 )
 
@@ -63,6 +63,7 @@ target_include_directories(opengl_app PRIVATE
     ${GLFW_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
     externals/glad/include
+    externals/stb
     include
 )
 

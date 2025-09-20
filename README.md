@@ -1,6 +1,6 @@
 # OpenGLApp
 
-![Screenshot](Screenshot_1.png)
+![Screenshot](images/readme_images/Screenshot_1.png)
 
 Um projeto de exemplo em C++ utilizando OpenGL 3.3 Core, GLFW, GLAD, GLM e shaders customizados. O objetivo é demonstrar a renderização de um retângulo colorido com interpolação de cores e shaders modernos.
 
@@ -12,7 +12,7 @@ Um projeto de exemplo em C++ utilizando OpenGL 3.3 Core, GLFW, GLAD, GLM e shade
 
 ## Estrutura do Projeto
 ```
-├── main.cpp                # Código principal
+├── src/main.cpp                # Código principal
 ├── include/shader_s.h      # Classe utilitária para shaders
 ├── shaders/                # Shaders GLSL (vertex/fragment)
 ├── externals/              # Dependências (GLAD, stb, imgui)
@@ -34,7 +34,7 @@ Um projeto de exemplo em C++ utilizando OpenGL 3.3 Core, GLFW, GLAD, GLM e shade
 ## Como compilar (Windows)
 1. Instale as dependências via MSYS2:
    ```sh
-   pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-glfw mingw-w64-x86_64-glm mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
+   pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-glfw mingw-w64-x86_64-glm mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
    ```
 2. Execute o script de configuração:
    ```sh
