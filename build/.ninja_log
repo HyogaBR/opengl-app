@@ -1,4 +1,0 @@
-# ninja log v7
-2	1917	7800385909081325	CMakeFiles/opengl_app.dir/main.cpp.obj	f34d6af99a233083
-11	5946	7800385909225609	CMakeFiles/opengl_app.dir/externals/glad/src/glad.c.obj	bd60b29247f33e5e
-5952	13305	7800385968561122	opengl_app.exe	5d94cc2ce32a797d
