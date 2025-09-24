@@ -20,13 +20,18 @@ const unsigned int SCR_HEIGHT = 600;
 int main() {
     // glfw: initialize and configure
     // ------------------------------
-    glfwInit();
+    std::cout << "Starting GLFW..." << std::endl;
+    if (!glfwInit()) { // testing glfwinit
+        std::cerr << "Failed to start GLFW" << std::endl;
+        return -1;
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
     // --------------------
+    std::cout << "Creating window..." << std::endl;
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
     if(window == NULL)
     {
@@ -39,13 +44,19 @@ int main() {
     
     // glad: load all OpenGL function pointers
     // ---------------------------------------
+    std::cout << "loading GLAD..." << std::endl;
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cerr << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
+    std::cout << "compiling shaders..." << std::endl;
     Shader shader("./shaders/shader.vert", "./shaders/shader.frag");
+    std::cout << "Shaders have been loaded!" << std::endl;
 
     float vertices[] = {
         // positions          // colors           // texture coords
@@ -86,32 +97,47 @@ int main() {
 
     // load and create a texture 
     // -------------------------
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load image, create texture and generate mipmaps
-    int width, height, nrChannels;
-    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char *data = stbi_load("./images/wall.jpg", &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
+    std::cout << "Loading textures..." << std::endl;
 
-    while (!glfwWindowShouldClose(window))
-    {
+    auto loadTexture = [](const char* path) -> unsigned int {
+        unsigned int texID;
+        glGenTextures(1, &texID);
+        glBindTexture(GL_TEXTURE_2D, texID); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+
+        // set the texture wrapping parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // set texture filtering parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // load image, create texture and generate mipmaps
+        int width, height, nrChannels;
+        // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+        unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 4);
+        if (data) {
+            std::cout << "loaded texture: " << path << " (" << width << "x" << height << ", canais: " << nrChannels << ")" << std::endl;
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+            stbi_image_free(data);
+        } else {
+            std::cerr << "failed to load texture: " << path << std::endl;
+            if (data) stbi_image_free(data);
+        }
+        return texID;
+    };
+
+//     shader.use(); // don't forget to activate/use the shader before setting uniforms!
+
+    unsigned int texture1 = loadTexture("./images/wall.jpg");
+    unsigned int texture2 = loadTexture("./images/image1.png");
+
+    shader.use(); // don't forget to activate/use the shader before setting uniforms!
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
+    std::cout << "Entering the main loop..." << std::endl;
+    while (!glfwWindowShouldClose(window)) {
         // input
         // -----
         processInput(window);
@@ -122,7 +148,10 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // bind Texture
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
 
         // render container
         shader.use();
@@ -144,6 +173,7 @@ int main() {
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
+    std::cout << "Program ends normally." << std::endl;
     return 0;
 }
 
